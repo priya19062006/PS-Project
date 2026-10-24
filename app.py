@@ -1,9 +1,23 @@
+import os
+from math import isfinite
+
 from flask import Flask, render_template, request
 import joblib
 import numpy as np
 import mysql.connector
 
 app = Flask(__name__)
+
+
+def get_db_config():
+    return {
+        "host": os.environ.get("MYSQL_HOST", "mysql"),
+        "port": int(os.environ.get("MYSQL_PORT", "3306")),
+        "user": os.environ.get("MYSQL_USER", "root"),
+        "password": os.environ.get("MYSQL_PASSWORD", "priya19"),
+        "database": os.environ.get("MYSQL_DATABASE", "ml_cicd"),
+    }
+
 
 # Load trained model
 model = joblib.load("model.pkl")
@@ -15,12 +29,7 @@ classes = ["Iris Setosa", "Iris Versicolor", "Iris Virginica"]
 @app.route("/")
 def home():
 
-    conn = mysql.connector.connect(
-        host="mysql",
-        user="root",
-        password="priya19",
-        database="ml_cicd"
-    )
+    conn = mysql.connector.connect(**get_db_config())
 
     cursor = conn.cursor()
 
@@ -50,10 +59,29 @@ def home():
 @app.route("/predict", methods=["POST"])
 def predict():
 
-    sepal_length = float(request.form["sepal_length"])
-    sepal_width = float(request.form["sepal_width"])
-    petal_length = float(request.form["petal_length"])
-    petal_width = float(request.form["petal_width"])
+    try:
+        measurements = [
+            float(request.form[field])
+            for field in (
+                "sepal_length",
+                "sepal_width",
+                "petal_length",
+                "petal_width",
+            )
+        ]
+    except (KeyError, ValueError):
+        return render_template(
+            "index.html",
+            error="Enter valid numeric measurements greater than zero.",
+        ), 400
+
+    if not all(isfinite(value) and value > 0 for value in measurements):
+        return render_template(
+            "index.html",
+            error="All measurements must be valid numbers greater than zero.",
+        ), 400
+
+    sepal_length, sepal_width, petal_length, petal_width = measurements
 
     # Prepare input
     features = np.array([[sepal_length, sepal_width, petal_length, petal_width]])
@@ -75,12 +103,7 @@ def predict():
     confidence = round(np.max(probability) * 100, 2)
 
     # Connect MySQL
-    conn = mysql.connector.connect(
-        host="mysql",
-        user="root",
-        password="priya19",
-        database="ml_cicd"
-    )
+    conn = mysql.connector.connect(**get_db_config())
 
     cursor = conn.cursor()
 

@@ -329,6 +329,15 @@ form{
     margin-top:20px;
 }
 
+.error-message{
+    margin-top:20px;
+    padding:14px 18px;
+    border:1px solid rgba(255,120,120,.6);
+    border-radius:12px;
+    background:rgba(160,30,30,.25);
+    color:#fff;
+}
+
 .input-box{
     display:flex;
     flex-direction:column;

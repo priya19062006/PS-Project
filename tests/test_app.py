@@ -41,3 +41,23 @@ def test_predict_returns_result_and_saves_to_db(client):
     assert b"Setosa" in response.data
     conn.commit.assert_called_once()
     assert cursor.execute.called
+
+
+@pytest.mark.parametrize("invalid_value", ["-1", "0", "not-a-number", "nan", "inf"])
+def test_predict_rejects_invalid_measurement(client, invalid_value):
+    form = {
+        "sepal_length": invalid_value,
+        "sepal_width": "3.5",
+        "petal_length": "1.4",
+        "petal_width": "0.2",
+    }
+    with (
+        patch.object(flask_app.model, "predict") as predict,
+        patch.object(flask_app.mysql.connector, "connect") as connect,
+    ):
+        response = client.post("/predict", data=form)
+
+    assert response.status_code == 400
+    assert b"greater than zero" in response.data
+    predict.assert_not_called()
+    connect.assert_not_called()

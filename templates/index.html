@@ -116,6 +116,10 @@ Flask, Docker, Jenkins and MySQL.
 
 </div>
 
+{% if error %}
+<div class="error-message" role="alert">{{ error }}</div>
+{% endif %}
+
 <form action="/predict" method="POST">
 
 <div class="input-box">
@@ -125,6 +129,7 @@ Flask, Docker, Jenkins and MySQL.
 <input
 type="number"
 step="any"
+min="0"
 name="sepal_length"
 required
 placeholder="Enter Sepal Length">
@@ -138,6 +143,7 @@ placeholder="Enter Sepal Length">
 <input
 type="number"
 step="any"
+min="0"
 name="sepal_width"
 required
 placeholder="Enter Sepal Width">
@@ -151,6 +157,7 @@ placeholder="Enter Sepal Width">
 <input
 type="number"
 step="any"
+min="0"
 name="petal_length"
 required
 placeholder="Enter Petal Length">
@@ -164,6 +171,7 @@ placeholder="Enter Petal Length">
 <input
 type="number"
 step="any"
+min="0"
 name="petal_width"
 required
 placeholder="Enter Petal Width">

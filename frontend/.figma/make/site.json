@@ -1,0 +1,10 @@
+{
+  "description": "This web application enables users to input flower measurements and receive machine learning predictions, enhancing data-driven decision-making in botany.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

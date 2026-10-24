@@ -1,0 +1,645 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+
+    min-height:100vh;
+    overflow-x:hidden;
+
+    background:linear-gradient(135deg,#4F46E5,#7C3AED,#9333EA,#2563EB);
+
+    color:#fff;
+
+}
+
+/* ================= Background ================= */
+
+.background{
+
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    overflow:hidden;
+
+}
+
+.circle{
+
+    position:absolute;
+    border-radius:50%;
+    filter:blur(70px);
+    opacity:.35;
+    animation:float 8s ease-in-out infinite;
+
+}
+
+.c1{
+
+    width:300px;
+    height:300px;
+    background:#60A5FA;
+    top:-100px;
+    left:-100px;
+
+}
+
+.c2{
+
+    width:350px;
+    height:350px;
+    background:#EC4899;
+    top:120px;
+    right:-120px;
+    animation-delay:2s;
+
+}
+
+.c3{
+
+    width:250px;
+    height:250px;
+    background:#22D3EE;
+    bottom:-80px;
+    left:40%;
+    animation-delay:4s;
+
+}
+
+@keyframes float{
+
+0%{transform:translateY(0);}
+50%{transform:translateY(25px);}
+100%{transform:translateY(0);}
+
+}
+
+/* ================= Header ================= */
+
+header{
+
+    width:1200px;
+    margin:auto;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:30px 0;
+
+}
+
+.logo{
+
+    font-size:30px;
+    font-weight:700;
+    transition:.3s;
+
+}
+
+.logo:hover{
+
+    transform:scale(1.08);
+
+}
+
+nav{
+
+    display:flex;
+    gap:35px;
+
+}
+
+nav a{
+
+    text-decoration:none;
+    color:white;
+    font-weight:500;
+    position:relative;
+
+}
+
+nav a::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:0;
+
+    left:0;
+
+    bottom:-5px;
+
+    height:2px;
+
+    background:white;
+
+    transition:.4s;
+
+}
+
+nav a:hover::after{
+
+    width:100%;
+
+}
+
+/* ================= Dashboard ================= */
+
+.dashboard{
+
+    width:1200px;
+    margin:20px auto 40px;
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:20px;
+
+}
+
+.card{
+
+    background:rgba(255,255,255,.12);
+
+    border:1px solid rgba(255,255,255,.2);
+
+    backdrop-filter:blur(18px);
+
+    border-radius:22px;
+
+    padding:28px;
+
+    text-align:center;
+
+    transition:.35s;
+
+}
+
+.card:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:0 20px 40px rgba(0,0,0,.25);
+
+}
+
+.card h2{
+
+    font-size:40px;
+    margin-bottom:15px;
+
+}
+
+.card h3{
+
+    margin-bottom:10px;
+
+}
+
+.card p{
+
+    color:#ddd;
+
+}
+
+/* ================= Hero ================= */
+
+.hero{
+
+    width:1200px;
+
+    margin:auto;
+
+}
+
+.glass-card{
+
+    display:grid;
+
+    grid-template-columns:1.1fr .9fr;
+
+    gap:45px;
+
+    background:rgba(255,255,255,.12);
+
+    backdrop-filter:blur(25px);
+
+    border-radius:30px;
+
+    border:1px solid rgba(255,255,255,.2);
+
+    padding:45px;
+
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+
+}
+
+.left{
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+}
+
+.right{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:25px;
+
+}
+
+.right img{
+
+    width:100%;
+
+    height:500px;
+
+    object-fit:cover;
+
+    border-radius:22px;
+
+    transition:.4s;
+
+}
+
+.right img:hover{
+
+    transform:scale(1.02);
+
+}
+
+h1{
+
+    font-size:48px;
+
+    line-height:60px;
+
+    margin-bottom:20px;
+
+}
+
+p{
+
+    color:#ececec;
+
+    line-height:28px;
+
+}
+
+.badges{
+
+    display:flex;
+
+    gap:12px;
+
+    flex-wrap:wrap;
+
+    margin:30px 0;
+
+}
+
+.badges span{
+
+    background:rgba(255,255,255,.15);
+
+    padding:10px 18px;
+
+    border-radius:30px;
+
+    border:1px solid rgba(255,255,255,.25);
+
+    font-size:14px;
+
+}
+/* ================= FORM ================= */
+
+form{
+    margin-top:20px;
+}
+
+.input-box{
+    display:flex;
+    flex-direction:column;
+    margin-bottom:22px;
+}
+
+.input-box label{
+    margin-bottom:8px;
+    font-size:15px;
+    font-weight:600;
+}
+
+.input-box input{
+    width:100%;
+    padding:16px 18px;
+    border:none;
+    outline:none;
+    border-radius:14px;
+    background:rgba(255,255,255,.18);
+    border:1px solid rgba(255,255,255,.25);
+    color:white;
+    font-size:16px;
+    transition:.3s;
+}
+
+.input-box input::placeholder{
+    color:#ddd;
+}
+
+.input-box input:focus{
+    background:rgba(255,255,255,.28);
+    border-color:white;
+    box-shadow:0 0 18px rgba(255,255,255,.3);
+}
+
+button{
+    width:100%;
+    padding:18px;
+    border:none;
+    border-radius:15px;
+    cursor:pointer;
+    font-size:18px;
+    font-weight:600;
+    color:white;
+    background:linear-gradient(135deg,#6C63FF,#8B5CF6);
+    transition:.3s;
+    box-shadow:0 15px 35px rgba(108,99,255,.35);
+}
+
+button:hover{
+    transform:translateY(-4px);
+    box-shadow:0 20px 40px rgba(0,0,0,.3);
+}
+
+/* ================= Prediction ================= */
+
+.prediction-card{
+
+    margin-top:35px;
+
+    padding:30px;
+
+    border-radius:20px;
+
+    text-align:center;
+
+    background:rgba(255,255,255,.12);
+
+    border:1px solid rgba(255,255,255,.2);
+
+}
+
+.prediction-name{
+
+    font-size:34px;
+
+    font-weight:700;
+
+    margin:20px 0;
+
+}
+
+.progress{
+
+    width:100%;
+
+    height:12px;
+
+    background:white;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    margin:20px 0;
+
+}
+
+.progress-bar{
+
+    height:100%;
+
+    background:linear-gradient(90deg,#00E676,#00C853);
+
+}
+
+/* ================= History ================= */
+
+.history-card{
+
+    margin-top:35px;
+
+    padding:25px;
+
+    border-radius:20px;
+
+    background:rgba(255,255,255,.12);
+
+    border:1px solid rgba(255,255,255,.2);
+
+    max-height:350px;
+
+    overflow:auto;
+
+}
+
+.history-card h2{
+
+    margin-bottom:18px;
+
+}
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+th{
+
+    background:#6C63FF;
+
+    padding:14px;
+
+}
+
+td{
+
+    padding:12px;
+
+    text-align:center;
+
+    border-bottom:1px solid rgba(255,255,255,.15);
+
+}
+
+tr:hover{
+
+    background:rgba(255,255,255,.08);
+
+}
+
+/* ================= Info Card ================= */
+
+.info-card{
+
+    padding:25px;
+
+    border-radius:20px;
+
+    background:rgba(255,255,255,.12);
+
+    border:1px solid rgba(255,255,255,.2);
+
+}
+
+.info-card h3{
+
+    margin-bottom:20px;
+
+}
+
+.info-card p{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    margin-bottom:12px;
+
+}
+
+.info-card b{
+
+    color:#FFD54F;
+
+}
+
+/* ================= Footer ================= */
+
+footer{
+
+    width:1200px;
+
+    margin:60px auto 30px;
+
+    padding:30px;
+
+    text-align:center;
+
+    border-radius:20px;
+
+    background:rgba(255,255,255,.12);
+
+    backdrop-filter:blur(20px);
+
+}
+
+footer h3{
+
+    margin-bottom:15px;
+
+}
+
+footer p{
+
+    margin:8px 0;
+
+}
+
+/* ================= Scrollbar ================= */
+
+::-webkit-scrollbar{
+
+    width:8px;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#8B5CF6;
+
+    border-radius:20px;
+
+}
+
+/* ================= Responsive ================= */
+
+@media(max-width:1000px){
+
+header,
+.dashboard,
+.hero,
+footer{
+
+    width:95%;
+
+}
+
+.dashboard{
+
+    grid-template-columns:repeat(2,1fr);
+
+}
+
+.glass-card{
+
+    grid-template-columns:1fr;
+
+}
+
+.right img{
+
+    height:350px;
+
+}
+
+header{
+
+    flex-direction:column;
+
+    gap:20px;
+
+}
+
+}
+
+@media(max-width:600px){
+
+.dashboard{
+
+    grid-template-columns:1fr;
+
+}
+
+h1{
+
+    font-size:34px;
+
+    line-height:42px;
+
+}
+
+nav{
+
+    gap:15px;
+
+    flex-wrap:wrap;
+
+}
+
+}

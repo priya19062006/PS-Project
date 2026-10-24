@@ -1,0 +1,25 @@
+
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: priya19
+      MYSQL_DATABASE: ml_cicd
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  flask-app:
+    build: .
+    container_name: ml-cicd-app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mysql
+
+volumes:
+  mysql_data:

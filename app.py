@@ -1,10 +1,11 @@
 import os
+import time
 from math import isfinite
 
 from flask import Flask, render_template, request
 import joblib
-import numpy as np
 import mysql.connector
+import numpy as np
 
 app = Flask(__name__)
 
@@ -14,9 +15,47 @@ def get_db_config():
         "host": os.environ.get("MYSQL_HOST", "mysql"),
         "port": int(os.environ.get("MYSQL_PORT", "3306")),
         "user": os.environ.get("MYSQL_USER", "root"),
-        "password": os.environ.get("MYSQL_PASSWORD", "priya19"),
+        "password": os.environ.get("MYSQL_PASSWORD", ""),
         "database": os.environ.get("MYSQL_DATABASE", "ml_cicd"),
     }
+
+
+def ensure_database_ready():
+    db_name = os.environ.get("MYSQL_DATABASE", "ml_cicd")
+    config = get_db_config()
+    server_config = {k: v for k, v in config.items() if k != "database"}
+
+    for attempt in range(30):
+        try:
+            conn = mysql.connector.connect(**server_config)
+            cursor = conn.cursor()
+            cursor.execute(f"CREATE DATABASE IF NOT EXISTS `{db_name}`")
+            conn.commit()
+            cursor.close()
+            conn.close()
+
+            conn = mysql.connector.connect(**config)
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS predictions (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    sepal_length FLOAT,
+                    sepal_width FLOAT,
+                    petal_length FLOAT,
+                    petal_width FLOAT,
+                    prediction VARCHAR(100)
+                )
+                """
+            )
+            conn.commit()
+            cursor.close()
+            conn.close()
+            return
+        except mysql.connector.Error:
+            if attempt == 29:
+                raise
+            time.sleep(2)
 
 
 # Load trained model
@@ -28,27 +67,30 @@ classes = ["Iris Setosa", "Iris Versicolor", "Iris Virginica"]
 
 @app.route("/")
 def home():
+    history = []
 
-    conn = mysql.connector.connect(**get_db_config())
+    try:
+        conn = mysql.connector.connect(**get_db_config())
+        cursor = conn.cursor()
 
-    cursor = conn.cursor()
+        cursor.execute("""
+            SELECT
+            sepal_length,
+            sepal_width,
+            petal_length,
+            petal_width,
+            prediction
+            FROM predictions
+            ORDER BY id DESC
+            LIMIT 10
+        """)
 
-    cursor.execute("""
-        SELECT
-        sepal_length,
-        sepal_width,
-        petal_length,
-        petal_width,
-        prediction
-        FROM predictions
-        ORDER BY id DESC
-        LIMIT 10
-    """)
+        history = cursor.fetchall()
 
-    history = cursor.fetchall()
-
-    cursor.close()
-    conn.close()
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error:
+        history = []
 
     return render_template(
         "index.html",
@@ -102,45 +144,47 @@ def predict():
     probability = model.predict_proba(features)
     confidence = round(np.max(probability) * 100, 2)
 
-    # Connect MySQL
-    conn = mysql.connector.connect(**get_db_config())
+    history = []
 
-    cursor = conn.cursor()
+    try:
+        conn = mysql.connector.connect(**get_db_config())
+        cursor = conn.cursor()
 
-    sql = """
-    INSERT INTO predictions
-    (sepal_length, sepal_width, petal_length, petal_width, prediction)
-    VALUES (%s, %s, %s, %s, %s)
-    """
+        sql = """
+        INSERT INTO predictions
+        (sepal_length, sepal_width, petal_length, petal_width, prediction)
+        VALUES (%s, %s, %s, %s, %s)
+        """
 
-    values = (
-        sepal_length,
-        sepal_width,
-        petal_length,
-        petal_width,
-        result
-    )
+        values = (
+            sepal_length,
+            sepal_width,
+            petal_length,
+            petal_width,
+            result,
+        )
 
-    cursor.execute(sql, values)
-    conn.commit()
+        cursor.execute(sql, values)
+        conn.commit()
 
-    # Get latest history
-    cursor.execute("""
-        SELECT
-        sepal_length,
-        sepal_width,
-        petal_length,
-        petal_width,
-        prediction
-        FROM predictions
-        ORDER BY id DESC
-        LIMIT 10
-    """)
+        cursor.execute("""
+            SELECT
+            sepal_length,
+            sepal_width,
+            petal_length,
+            petal_width,
+            prediction
+            FROM predictions
+            ORDER BY id DESC
+            LIMIT 10
+        """)
 
-    history = cursor.fetchall()
+        history = cursor.fetchall()
 
-    cursor.close()
-    conn.close()
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error:
+        history = []
 
     return render_template(
         "index.html",
@@ -152,4 +196,5 @@ def predict():
 
 
 if __name__ == "__main__":
+    ensure_database_ready()
     app.run(host="0.0.0.0", port=5000, debug=True)

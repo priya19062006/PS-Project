@@ -58,7 +58,9 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                run("docker compose -p ${COMPOSE_PROJECT} build flask-app")
+                withCredentials([string(credentialsId: 'mysql-root-password', variable: 'MYSQL_ROOT_PASSWORD')]) {
+                    run("docker compose -p ${COMPOSE_PROJECT} build flask-app")
+                }
             }
         }
 
@@ -66,7 +68,9 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                run("docker compose -p ${COMPOSE_PROJECT} up -d")
+                withCredentials([string(credentialsId: 'mysql-root-password', variable: 'MYSQL_ROOT_PASSWORD')]) {
+                    run("docker compose -p ${COMPOSE_PROJECT} up -d")
+                }
             }
         }
 

@@ -58,6 +58,38 @@ def test_predict_rejects_invalid_measurement(client, invalid_value):
         response = client.post("/predict", data=form)
 
     assert response.status_code == 400
-    assert b"greater than zero" in response.data
+    assert b"within Iris ranges" in response.data
+    predict.assert_not_called()
+    connect.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    ("field", "invalid_value"),
+    [
+        ("sepal_length", "8.0"),
+        ("sepal_width", "5.0"),
+        ("petal_length", "55"),
+        ("petal_width", "3.0"),
+    ],
+)
+def test_predict_rejects_measurements_outside_iris_ranges(
+    client, field, invalid_value
+):
+    form = {
+        "sepal_length": "5.1",
+        "sepal_width": "3.5",
+        "petal_length": "1.4",
+        "petal_width": "0.2",
+    }
+    form[field] = invalid_value
+
+    with (
+        patch.object(flask_app.model, "predict") as predict,
+        patch.object(flask_app.mysql.connector, "connect") as connect,
+    ):
+        response = client.post("/predict", data=form)
+
+    assert response.status_code == 400
+    assert b"within Iris ranges" in response.data
     predict.assert_not_called()
     connect.assert_not_called()

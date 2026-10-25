@@ -63,6 +63,12 @@ model = joblib.load("model.pkl")
 
 # Iris class names
 classes = ["Iris Setosa", "Iris Versicolor", "Iris Virginica"]
+measurement_ranges = {
+    "sepal_length": (4.3, 7.9),
+    "sepal_width": (2.0, 4.4),
+    "petal_length": (1.0, 6.9),
+    "petal_width": (0.1, 2.5),
+}
 
 
 @app.route("/")
@@ -104,23 +110,27 @@ def predict():
     try:
         measurements = [
             float(request.form[field])
-            for field in (
-                "sepal_length",
-                "sepal_width",
-                "petal_length",
-                "petal_width",
-            )
+            for field in measurement_ranges
         ]
     except (KeyError, ValueError):
         return render_template(
             "index.html",
-            error="Enter valid numeric measurements greater than zero.",
+            error="Enter numeric measurements within Iris ranges.",
         ), 400
 
-    if not all(isfinite(value) and value > 0 for value in measurements):
+    if not all(
+        isfinite(value) and minimum <= value <= maximum
+        for value, (minimum, maximum) in zip(
+            measurements, measurement_ranges.values()
+        )
+    ):
         return render_template(
             "index.html",
-            error="All measurements must be valid numbers greater than zero.",
+            error=(
+                "Measurements must be within Iris ranges: sepal length 4.3-7.9 cm, "
+                "sepal width 2.0-4.4 cm, petal length 1.0-6.9 cm, "
+                "and petal width 0.1-2.5 cm."
+            ),
         ), 400
 
     sepal_length, sepal_width, petal_length, petal_width = measurements

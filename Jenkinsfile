@@ -16,9 +16,8 @@ def py() {
 pipeline {
     agent any
 
-    parameters {
-        booleanParam(name: 'RETRAIN', defaultValue: false,
-                     description: 'Retrain the model (train.py) before testing')
+    triggers {
+        pollSCM('H/1 * * * *')
     }
 
     options {
@@ -38,8 +37,7 @@ pipeline {
             }
         }
 
-        stage('Train Model (optional)') {
-            when { expression { params.RETRAIN } }
+        stage('Train Model') {
             steps {
                 run("${py()} train.py")
             }
